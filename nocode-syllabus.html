@@ -30,10 +30,6 @@
       border: 1px solid var(--line);
       border-radius: 14px;
       padding: 12px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
       margin-bottom: 12px;
     }
     .title {
@@ -44,18 +40,30 @@
     .title span { color: var(--brand); }
     .viewer {
       width: 100%;
-      height: calc(100vh - 110px);
-      min-height: 600px;
+      min-height: calc(100vh - 110px);
       border: 1px solid var(--line);
       border-radius: 14px;
-      overflow: hidden;
+      overflow: auto;
       background: #0f0f0f;
+      padding: 14px;
     }
-    iframe {
+    #pdfPages {
+      display: grid;
+      gap: 14px;
+      justify-items: center;
+    }
+    .pdf-page {
       width: 100%;
-      height: 100%;
-      border: 0;
+      max-width: 950px;
+      border-radius: 10px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+      background: #fff;
       display: block;
+    }
+    .loading {
+      color: var(--muted);
+      text-align: center;
+      padding: 48px 14px;
     }
   </style>
 </head>
@@ -65,12 +73,49 @@
       <div class="title">Embedded Syllabus: <span>Introduction No-Code App Development</span></div>
     </div>
 
-    <section class="viewer">
-      <iframe
-        src="Introdection No Code App Development.pdf#toolbar=0&navpanes=0&scrollbar=1&view=FitH"
-        title="No-Code Syllabus PDF"
-      ></iframe>
+    <section class="viewer" aria-label="PDF Viewer">
+      <div id="pdfPages">
+        <div id="loading" class="loading">Loading syllabus PDF...</div>
+      </div>
     </section>
   </main>
+
+  <script type="module">
+    import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.mjs";
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.worker.min.mjs";
+
+    const pdfPath = "Introdection%20No%20Code%20App%20Development.pdf";
+    const pagesWrap = document.getElementById("pdfPages");
+    const loadingEl = document.getElementById("loading");
+
+    async function renderPdf() {
+      try {
+        const pdf = await pdfjsLib.getDocument(pdfPath).promise;
+        if (loadingEl) loadingEl.remove();
+
+        for (let p = 1; p <= pdf.numPages; p += 1) {
+          const page = await pdf.getPage(p);
+          const containerWidth = Math.min(pagesWrap.clientWidth - 8, 950);
+          const baseViewport = page.getViewport({ scale: 1 });
+          const scale = containerWidth / baseViewport.width;
+          const viewport = page.getViewport({ scale });
+
+          const canvas = document.createElement("canvas");
+          canvas.className = "pdf-page";
+          const context = canvas.getContext("2d", { alpha: false });
+          canvas.width = Math.floor(viewport.width);
+          canvas.height = Math.floor(viewport.height);
+
+          pagesWrap.appendChild(canvas);
+          await page.render({ canvasContext: context, viewport }).promise;
+        }
+      } catch (err) {
+        if (loadingEl) loadingEl.textContent = "Unable to render PDF in this browser.";
+      }
+    }
+
+    renderPdf();
+    window.addEventListener("contextmenu", (e) => e.preventDefault());
+  </script>
 </body>
 </html>
