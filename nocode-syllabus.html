@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>No-Code Syllabus PDF</title>
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --panel: #141414;
+      --line: #2a2a2a;
+      --text: #f4f4f4;
+      --muted: #b8b8b8;
+      --brand: #ff5a1f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "DM Sans", sans-serif;
+    }
+    .wrap {
+      width: min(1200px, 94vw);
+      margin: 0 auto;
+      padding: 20px 0 28px;
+    }
+    .topbar {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .title span { color: var(--brand); }
+    .viewer {
+      width: 100%;
+      height: calc(100vh - 110px);
+      min-height: 600px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0f0f0f;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="topbar">
+      <div class="title">Embedded Syllabus: <span>Introduction No-Code App Development</span></div>
+    </div>
+
+    <section class="viewer">
+      <iframe
+        src="Introdection No Code App Development.pdf#toolbar=0&navpanes=0&scrollbar=1&view=FitH"
+        title="No-Code Syllabus PDF"
+      ></iframe>
+    </section>
+  </main>
+</body>
+</html>
