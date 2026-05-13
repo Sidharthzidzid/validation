@@ -93,18 +93,23 @@
         const pdf = await pdfjsLib.getDocument(pdfPath).promise;
         if (loadingEl) loadingEl.remove();
 
+        const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
+
         for (let p = 1; p <= pdf.numPages; p += 1) {
           const page = await pdf.getPage(p);
           const containerWidth = Math.min(pagesWrap.clientWidth - 8, 950);
           const baseViewport = page.getViewport({ scale: 1 });
-          const scale = containerWidth / baseViewport.width;
-          const viewport = page.getViewport({ scale });
+          const cssScale = containerWidth / baseViewport.width;
+          const renderScale = cssScale * dpr;
+          const viewport = page.getViewport({ scale: renderScale });
 
           const canvas = document.createElement("canvas");
           canvas.className = "pdf-page";
           const context = canvas.getContext("2d", { alpha: false });
           canvas.width = Math.floor(viewport.width);
           canvas.height = Math.floor(viewport.height);
+          canvas.style.width = `${Math.floor(viewport.width / dpr)}px`;
+          canvas.style.height = `${Math.floor(viewport.height / dpr)}px`;
 
           pagesWrap.appendChild(canvas);
           await page.render({ canvasContext: context, viewport }).promise;
